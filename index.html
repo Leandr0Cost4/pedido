@@ -1,14 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Para a princesa do meu mundo 💘</title>
+  <title> Para a princesa do meu mundo 💘</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #000000;
+      background: #000000; /* Fundo preto */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -20,14 +21,13 @@
 
     h1 {
       font-size: 32px;
-      color: #FFFFFF;
+      color: #FFFFFF; /* Cor do texto para branco */
       margin-bottom: 40px;
     }
 
     .botoes {
       display: flex;
       gap: 20px;
-      position: relative;
     }
 
     button {
@@ -37,22 +37,18 @@
       border-radius: 8px;
       cursor: pointer;
       transition: 0.3s;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      position: relative;
-      z-index: 2;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra para destacar os botões no fundo preto */
     }
 
     #sim {
-      background-color: #28a745;
+      background-color: #28a745; /* Verde para 'Sim' */
       color: white;
     }
 
     #nao {
-      background-color: #dc3545;
+      background-color: #dc3545; /* Vermelho para 'Não' */
       color: white;
       position: absolute;
-      top: 0;
-      left: 0;
     }
 
     .coracao-animado {
@@ -76,37 +72,55 @@
   </style>
 </head>
 <body>
-  <h1>Nanda, posso te dar um beijo? 🙏🏾 😏</h1>
+  <h1>Nanda, Posso te dar um beijo ? 🙏🏾 😏</h1>
   <div class="botoes">
-    <button id="sim" type="button">Sim 😘</button>
+    <button id="sim" onclick="comemorar()">Sim 😘</button>
     <button id="nao" type="button">Não 😒</button>
   </div>
 
   <script>
-    const botaoNao = document.getElementById("nao");
-
-    botaoNao.addEventListener("pointerenter", moverBotao);
-    botaoNao.addEventListener("pointerdown", (event) => {
-      event.preventDefault();
-      moverBotao();
-    });
-    botaoNao.addEventListener("click", (event) => {
-      event.preventDefault();
-    });
-
     function moverBotao() {
       const botao = document.getElementById("nao");
       const maxX = window.innerWidth - botao.offsetWidth;
       const maxY = window.innerHeight - botao.offsetHeight;
 
-      const newX = Math.random() * maxX;
-      const newY = Math.random() * maxY;
+      let newX, newY;
+      let attempts = 0;
+      const maxAttempts = 50;
+      const margin = 50;
 
-      botao.style.left = `${newX}px`;
-      botao.style.top = `${newY}px`;
+      do {
+        newX = Math.random() * (maxX - margin * 2) + margin;
+        newY = Math.random() * (maxY - margin * 2) + margin;
+
+        const container = document.querySelector('.container') || document.querySelector('.botoes').parentNode;
+        if (!container) break;
+
+        const containerRect = container.getBoundingClientRect();
+        const btnRect = {
+            left: newX,
+            top: newY,
+            right: newX + botao.offsetWidth,
+            bottom: newY + botao.offsetHeight
+        };
+
+        const overlaps = !(btnRect.right < containerRect.left ||
+                           btnRect.left > containerRect.right ||
+                           btnRect.bottom < containerRect.top ||
+                           btnRect.top > containerRect.bottom);
+
+        attempts++;
+        if (!overlaps) break;
+      } while (attempts < maxAttempts);
+
+      if (attempts >= maxAttempts) {
+          newX = Math.random() < 0.5 ? Math.random() * (maxX * 0.2) : maxX - (Math.random() * (maxX * 0.2));
+          newY = Math.random() < 0.5 ? Math.random() * (maxY * 0.2) : maxY - (Math.random() * (maxY * 0.2));
+      }
+
+      botao.style.left = newX + "px";
+      botao.style.top = newY + "px";
     }
-
-    document.getElementById("sim").addEventListener("click", comemorar);
 
     function comemorar() {
       document.querySelector('h1').textContent = " 😏😏😏 ";
@@ -130,8 +144,8 @@
       coracao.style.left = `${startX}px`;
       coracao.style.top = `${startY}px`;
 
-      const randomX = (Math.random() - 0.5) * window.innerWidth * 1.2;
-      const randomY = (Math.random() - 0.5) * window.innerHeight * 1.2;
+      const randomX = (Math.random() - 0.5) * window.innerWidth * 1.0;
+      const randomY = (Math.random() - 0.5) * window.innerHeight * 1.0;
       const randomRot = Math.random() * 720 - 360;
 
       const cor = Math.random() < 0.5 ? 'white' : 'red';
@@ -148,6 +162,18 @@
         coracao.remove();
       });
     }
+
+    // Adiciona suporte a toque e impede cliques no botão "não"
+    const botaoNao = document.getElementById("nao");
+
+    botaoNao.addEventListener("mouseenter", moverBotao);
+    botaoNao.addEventListener("touchstart", function(event) {
+      event.preventDefault();
+      moverBotao();
+    });
+    botaoNao.addEventListener("click", function(event) {
+      event.preventDefault();
+    });
   </script>
 </body>
 </html>
