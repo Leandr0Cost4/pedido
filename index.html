@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title> Para a princesa do meu mundo 💘</title>
+  <title>Para a princesa do meu mundo 💘</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #000000; /* Fundo preto */
+      background: #000000;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -20,13 +20,14 @@
 
     h1 {
       font-size: 32px;
-      color: #FFFFFF; /* Cor do texto para branco */
+      color: #FFFFFF;
       margin-bottom: 40px;
     }
 
     .botoes {
       display: flex;
       gap: 20px;
+      position: relative;
     }
 
     button {
@@ -36,101 +37,83 @@
       border-radius: 8px;
       cursor: pointer;
       transition: 0.3s;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra para destacar os botões no fundo preto */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 2;
     }
 
     #sim {
-      background-color: #28a745; /* Verde para 'Sim' */
+      background-color: #28a745;
       color: white;
     }
 
     #nao {
-      background-color: #dc3545; /* Vermelho para 'Não' */
+      background-color: #dc3545;
       color: white;
       position: absolute;
+      top: 0;
+      left: 0;
     }
 
-    /* Novos estilos para os corações */
     .coracao-animado {
       position: fixed;
-      font-size: 24px; /* Tamanho do coração */
+      font-size: 24px;
       opacity: 0;
-      animation: explodeHeart 1.5s forwards; /* Animação de explosão para os corações */
-      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Pequena sombra para destacar */
+      animation: explodeHeart 1.5s forwards;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
       z-index: 999;
-      pointer-events: none; /* Não interfere com cliques */
+      pointer-events: none;
     }
 
     @keyframes explodeHeart {
       0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-      20% { transform: scale(1.2); } /* Aumenta um pouco no início */
+      20% { transform: scale(1.2); }
       100% {
-        transform: translate(var(--x), var(--y)) scale(0.5) rotate(var(--rot)); /* Movimento, escala e rotação aleatórios */
+        transform: translate(var(--x), var(--y)) scale(0.5) rotate(var(--rot));
         opacity: 0;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Nanda, Posso te dar um beijo ? 🙏🏾 😏</h1>
+  <h1>Nanda, posso te dar um beijo? 🙏🏾 😏</h1>
   <div class="botoes">
-    <button id="sim" onclick="comemorar()">Sim 😘</button>
-    <button id="nao" onmouseover="moverBotao()">Não 😒</button>
+    <button id="sim" type="button">Sim 😘</button>
+    <button id="nao" type="button">Não 😒</button>
   </div>
 
   <script>
+    const botaoNao = document.getElementById("nao");
+
+    botaoNao.addEventListener("pointerenter", moverBotao);
+    botaoNao.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      moverBotao();
+    });
+    botaoNao.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
+
     function moverBotao() {
       const botao = document.getElementById("nao");
       const maxX = window.innerWidth - botao.offsetWidth;
       const maxY = window.innerHeight - botao.offsetHeight;
-      
-      let newX, newY;
-      let attempts = 0;
-      const maxAttempts = 50;
-      const margin = 50; // Margem para evitar que o botão saia muito da tela ou se sobreponha demais
-      
-      do {
-        newX = Math.random() * (maxX - margin * 2) + margin;
-        newY = Math.random() * (maxY - margin * 2) + margin;
-        
-        // Verifica se o novo posicionamento se sobrepõe aos outros elementos principais
-        const container = document.querySelector('.container') || document.querySelector('.botoes').parentNode; /* Pega o container pai */
-        if (!container) break; // Se não encontrar, sai para evitar erro
-        
-        const containerRect = container.getBoundingClientRect();
-        const btnRect = {
-            left: newX,
-            top: newY,
-            right: newX + botao.offsetWidth,
-            bottom: newY + botao.offsetHeight
-        };
-        
-        // Simples verificação de sobreposição
-        const overlaps = !(btnRect.right < containerRect.left ||
-                           btnRect.left > containerRect.right ||
-                           btnRect.bottom < containerRect.top ||
-                           btnRect.top > containerRect.bottom);
-        
-        attempts++;
-        if (!overlaps) break;
-      } while (attempts < maxAttempts);
 
-      // Se ainda sobrepor após muitas tentativas, tenta posicionar em um canto mais extremo
-      if (attempts >= maxAttempts) {
-          newX = Math.random() < 0.5 ? Math.random() * (maxX * 0.2) : maxX - (Math.random() * (maxX * 0.2));
-          newY = Math.random() < 0.5 ? Math.random() * (maxY * 0.2) : maxY - (Math.random() * (maxY * 0.2));
-      }
-      
-      botao.style.left = newX + "px";
-      botao.style.top = newY + "px";
+      const newX = Math.random() * maxX;
+      const newY = Math.random() * maxY;
+
+      botao.style.left = `${newX}px`;
+      botao.style.top = `${newY}px`;
     }
+
+    document.getElementById("sim").addEventListener("click", comemorar);
 
     function comemorar() {
       document.querySelector('h1').textContent = " 😏😏😏 ";
       document.getElementById('sim').style.display = 'none';
       document.getElementById('nao').style.display = 'none';
 
-      for (let i = 0; i < 100; i++) { // Aumentei a quantidade de corações
+      for (let i = 0; i < 100; i++) {
         criarCoracao();
       }
     }
@@ -138,30 +121,28 @@
     function criarCoracao() {
       const coracao = document.createElement("div");
       coracao.className = "coracao-animado";
-      coracao.innerHTML = '❤️'; /* Ícone de coração */
+      coracao.innerHTML = '❤️';
       document.body.appendChild(coracao);
 
-      // Posição inicial: Centro horizontal e mais para cima verticalmente (35% da altura da tela)
       const startX = window.innerWidth / 2;
-      const startY = window.innerHeight * 0.48; // ***** ALTERAÇÃO AQUI: Posiciona mais acima *****
+      const startY = window.innerHeight * 0.48;
 
       coracao.style.left = `${startX}px`;
       coracao.style.top = `${startY}px`;
 
-      // Direção aleatória da explosão
-      const randomX = (Math.random() - 0.5) * window.innerWidth * 1.0; /* Espalha mais horizontalmente */
-      const randomY = (Math.random() - 0.5) * window.innerHeight * 1.0; /* Espalha mais verticalmente */
-      const randomRot = Math.random() * 720 - 360; /* Rotação aleatória */
+      const randomX = (Math.random() - 0.5) * window.innerWidth * 1.2;
+      const randomY = (Math.random() - 0.5) * window.innerHeight * 1.2;
+      const randomRot = Math.random() * 720 - 360;
 
-      const cor = Math.random() < 0.5 ? 'white' : 'red'; /* 50% branco, 50% vermelho */
+      const cor = Math.random() < 0.5 ? 'white' : 'red';
       coracao.style.color = cor;
 
       coracao.style.setProperty('--x', `${randomX}px`);
       coracao.style.setProperty('--y', `${randomY}px`);
       coracao.style.setProperty('--rot', `${randomRot}deg`);
 
-      coracao.style.animationDuration = `${Math.random() * 1.5 + 1.5}s`; /* Duração da animação um pouco maior */
-      coracao.style.animationDelay = `${Math.random() * 0.1}s`; /* Pequeno delay */
+      coracao.style.animationDuration = `${Math.random() * 1.5 + 1.5}s`;
+      coracao.style.animationDelay = `${Math.random() * 0.1}s`;
 
       coracao.addEventListener('animationend', () => {
         coracao.remove();
